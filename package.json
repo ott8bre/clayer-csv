@@ -1,0 +1,17 @@
+{
+  "name": "clayer-csv",
+  "version": "1.0.0",
+  "description": "synchronizes your clayer with local csv files",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Francesco Frosini",
+  "license": "BSD3",
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "csv": "^1.1.1",
+    "superagent": "^3.5.2",
+    "superagent-promise": "^1.1.0"
+  }
+}

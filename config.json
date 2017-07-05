@@ -1,0 +1,5 @@
+{
+  "account/products": [
+    "name", "sku", "slug", "product_type_id"
+  ] 
+}
