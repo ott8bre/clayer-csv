@@ -7,11 +7,24 @@
     "start": "node index.js"
   },
   "author": "Francesco Frosini",
-  "license": "BSD3",
+  "license": "BSD-3-Clause",
   "dependencies": {
     "bluebird": "^3.5.0",
     "csv": "^1.1.1",
     "superagent": "^3.5.2",
     "superagent-promise": "^1.1.0"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ott8bre/clayer-csv.git"
+  },
+  "keywords": [
+    "clayer",
+    "csv"
+  ],
+  "bugs": {
+    "url": "https://github.com/ott8bre/clayer-csv/issues"
+  },
+  "homepage": "https://github.com/ott8bre/clayer-csv#readme"
 }
