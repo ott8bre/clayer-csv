@@ -1,10 +1,12 @@
 {
   "data": [{
-    "name"  : "products_types",
+    "file"  : "product_types",
+    "name"  : "product_type",
     "url"   : "account/product_types",
     "fields": ["name"] 
   },{
-    "name"  : "products",
+    "file"  : "products",
+    "name"  : "product",
     "url"   : "account/products",
     "fields": ["name", "sku", "slug", "product_type_id"] 
   }]

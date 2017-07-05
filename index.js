@@ -64,16 +64,21 @@ function fetch(url){
 		process.stdout.write("success.\n");
 
 		process.stdout.write("fetching.. ");
-		return clayer.fetch(url);	
+		return clayer.get(url);	
 	};
 }
 
-function update(url){
+function update(url, name){
 	return function(array){
 		process.stdout.write("success.\n");
 
 		process.stdout.write("updating.. ");
-		return clayer.update(url, array);	
+		var promises = array.map(function(p) {
+			var obj = {}; 
+			obj[name] = p;
+			return p.id ? clayer.put(url, obj, p.id) : clayer.post(url, obj);
+		});
+		return Promise.all(promises);
 	}
 }
 
@@ -92,12 +97,12 @@ function authenticate(){
 }
 
 function synch_one(obj){
-	var load_fn = load(obj.name),
+	var load_fn = load(obj.file),
 			pref_fn = before_update(obj.fields),
-			updt_fn = update(obj.url),
+			updt_fn = update(obj.url, obj.name),
 			ftch_fn = fetch(obj.url),
 			post_fn = after_fetch(obj.fields),
-			save_fn = save(obj.name);
+			save_fn = save(obj.file);
 	return load_fn()
 		.then(pref_fn)
 		.then(updt_fn)
