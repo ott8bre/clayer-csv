@@ -17,7 +17,7 @@ var csv 	 = require('./csv');
 // CONSTANTS //
 var CLIENT_ID 		= process.argv[2],
     CLIENT_SECRET	= process.argv[3],
-		CSV_FILE			= "clayer.csv";
+		CSV_FOLDER		= process.argv[4] || "DATA";
 
 // HELPERS //
 function before_update(keys){
@@ -52,7 +52,7 @@ function save(products){
 	process.stdout.write("success.\n");
 
 	process.stdout.write("saving  .. ");
-	return csv.save(products, CSV_FILE);
+	return csv.save(products, CSV_FOLDER+"/products.csv");
 }
 
 function fetch(){
@@ -77,7 +77,7 @@ function load(){
 	process.stdout.write("success.\n");
 
 	process.stdout.write("loading .. ");
-	return csv.load(CSV_FILE);	
+	return csv.load(CSV_FOLDER+"/products.csv");	
 }
 
 function authenticate(){
@@ -85,8 +85,12 @@ function authenticate(){
 	return clayer.auth_login(CLIENT_ID, CLIENT_SECRET);
 }
 
+function init(){
+	return mkdir(CSV_FOLDER);
+}
+
 // MAIN //
-authenticate()
+authenticate()	
 	.then(load)
 	.then(update)
 	.then(fetch)

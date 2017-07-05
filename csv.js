@@ -1,4 +1,5 @@
 var Promise     = require('bluebird');
+var mkdirp      = require('mkdirp');
 var fs          = require('fs');
 var readFile    = Promise.promisify(fs.readFile);
 var writeFile   = Promise.promisify(fs.writeFile);
@@ -41,6 +42,7 @@ function parse(array){
 }
 
 module.exports.save = function(array, path){
+  mkdirp.sync( require('path').dirname(path) );
   return writeFile (path, array.length === 0 ? '' : stringify(array));
 };
 
@@ -49,5 +51,8 @@ module.exports.load = function(path){
   .then ( function (data) {
     var lines = data.toString().split('\n');
     return lines.length === 0 ? [] : parse(lines);
+  })
+  .catch( function(error) {
+    return [];
   });
 };
