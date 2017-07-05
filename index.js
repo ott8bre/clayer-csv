@@ -10,6 +10,8 @@ if(process.argv.length < 2){
 }
 
 // REQUIRES //
+var Promise     = require('bluebird');
+
 var config = require('./config');
 var clayer = require('./clayer');
 var csv 	 = require('./csv');
@@ -44,40 +46,44 @@ function after_fetch(keys){
 function done(){
 	process.stdout.write("success.\n");
 
-	process.stdout.write("done");
+	//process.stdout.write("done");
 	process.exit(0);
 }
 
-function save(products){
-	process.stdout.write("success.\n");
+function save(name){
+	return function(array){
+		process.stdout.write("success.\n");
 
-	process.stdout.write("saving  .. ");
-	return csv.save(products, CSV_FOLDER+"/products.csv");
+		process.stdout.write("saving  .. ");
+		return csv.save(array, CSV_FOLDER+"/"+name+".csv");
+	}
 }
 
-function fetch(){
-	process.stdout.write("success.\n");
+function fetch(url){
+	return function() {
+		process.stdout.write("success.\n");
 
-	var filter = after_fetch(config["account/products"]);
-
-	process.stdout.write("fetching.. ");
-	return filter( clayer.products_fetch() );	
+		process.stdout.write("fetching.. ");
+		return clayer.fetch(url);	
+	};
 }
 
-function update(products){
-	process.stdout.write("success.\n");
+function update(url){
+	return function(array){
+		process.stdout.write("success.\n");
 
-	var filter = before_update(config["account/products"]);
-
-	process.stdout.write("updating.. ");
-	return clayer.products_update(filter(products));	
+		process.stdout.write("updating.. ");
+		return clayer.update(url, array);	
+	}
 }
 
-function load(){
-	process.stdout.write("success.\n");
+function load(name){
+	return function() {
+		//process.stdout.write("success.\n");
 
-	process.stdout.write("loading .. ");
-	return csv.load(CSV_FOLDER+"/products.csv");	
+		process.stdout.write("loading .. ");
+		return csv.load(CSV_FOLDER+"/"+name+".csv");			
+	};
 }
 
 function authenticate(){
@@ -85,20 +91,38 @@ function authenticate(){
 	return clayer.auth_login(CLIENT_ID, CLIENT_SECRET);
 }
 
-function init(){
-	return mkdir(CSV_FOLDER);
+function synch_one(obj){
+	var load_fn = load(obj.name),
+			pref_fn = before_update(obj.fields),
+			updt_fn = update(obj.url),
+			ftch_fn = fetch(obj.url),
+			post_fn = after_fetch(obj.fields),
+			save_fn = save(obj.name);
+	return load_fn()
+		.then(pref_fn)
+		.then(updt_fn)
+		.then(ftch_fn)
+		.then(post_fn)
+		.then(save_fn)
+		;
+}
+
+function synch_all(){
+	process.stdout.write("success.\n");
+	return Promise.each(config.data, function(d, i) {
+		console.log("");
+		console.log("--- "+d.name+" ---");
+//		console.log("::: "+i+". "+d.name+" :::");
+		return synch_one(d);
+	});
 }
 
 // MAIN //
 authenticate()	
-	.then(load)
-	.then(update)
-	.then(fetch)
-	.then(save)
+	.then(synch_all)
 	.then(done)
 	.catch(function(error){
 		process.stdout.write("fail.\n");
 		console.log(error);
 		process.exit(1);
 	});
-

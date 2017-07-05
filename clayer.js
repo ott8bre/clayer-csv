@@ -17,9 +17,9 @@ module.exports.auth_login = function(id, secret) {
   });
 };
 
-module.exports.products_fetch = function(){ 
+module.exports.fetch = function(url){ 
   return agent
-		.get("https://"+DOMAIN+"/account/products")
+		.get("https://"+DOMAIN+"/"+url)
 		.set('Authorization', 'Bearer '+_token)
 		.set('Accept', 'application/json')
     .then(function(res) {
@@ -27,27 +27,27 @@ module.exports.products_fetch = function(){
     });
 };
 
-function product_post(obj){ 
+function post(url, obj){ 
   return agent
-    .post("https://"+DOMAIN+"/account/products")
+    .post("https://"+DOMAIN+"/"+url)
     .set('Authorization', 'Bearer '+_token)
     .send({ product: obj })
     .set('ContentType', 'application/json')
     .set('Accept', 'application/json');
 };
 
-function product_put(obj){ 
+function put(url, obj){ 
   return agent
-    .put("https://"+DOMAIN+"/account/products/"+obj.id)
+    .put("https://"+DOMAIN+"/"+url+"/"+obj.id)
     .set('Authorization', 'Bearer '+_token)
     .send({ product: obj })
     .set('ContentType', 'application/json')
     .set('Accept', 'application/json');
 };
 
-module.exports.products_update = function(array){ 
+module.exports.update = function(url, array){ 
   var promises = array.map(function(p) {
-    return p.id ? product_put(p) : product_post(p);
+    return p.id ? put(url, p) : post(url, p);
   });
   return Promise.all(promises);
 };
