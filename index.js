@@ -108,8 +108,8 @@ function synch_one(obj){
 }
 
 function synch_all(){
-	process.stdout.write("success.\n");
 	return Promise.each(config.data, function(d, i) {
+		process.stdout.write("success.\n");
 		console.log("");
 		console.log("--- "+d.name+" ---");
 //		console.log("::: "+i+". "+d.name+" :::");
